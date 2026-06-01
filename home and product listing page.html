@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exclusive - Home & Product Listing (Task 2)</title>
+  
+  <!-- Tailwind CSS CDN for utility-based styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Poppins Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Configuration matching Figma specs -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#DB4444',
+              hoverPrimary: '#C23333',
+              dark: '#000000',
+              green: '#00FF66',
+              lightBg: '#F5F5F5'
+            }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    /* Slider transitions */
+    .fade-slide {
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-gray-900 select-none font-sans antialiased">
+
+  <!-- ================= HEADER SECTION (From Task 1) ================= -->
+  <header class="w-full border-b border-gray-200">
+    <!-- 1. TOP PROMO BAR -->
+    <div class="w-full bg-brand-dark text-white text-xs md:text-sm py-2.5 px-4 flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-4 select-none">
+      <div class="flex-1 flex justify-center items-center gap-2">
+        <span class="font-light text-gray-300 text-center sm:text-left">
+          Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!
+        </span>
+        <a href="#shop-section" class="font-semibold underline hover:text-brand-primary transition-all">
+          ShopNow
+        </a>
+      </div>
+      <div class="flex items-center gap-1 text-gray-300 cursor-pointer hover:text-white transition-colors text-xs">
+        <span>English</span>
+        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+      </div>
+    </div>
+
+    <!-- 2. MAIN NAVIGATION BAR -->
+    <div class="w-full max-w-7xl mx-auto px-4 md:px-8 py-5 flex items-center justify-between gap-4 relative">
+      <!-- LOGO -->
+      <a href="#hero-section" class="text-2xl font-bold tracking-wider text-brand-dark hover:scale-95 transition-transform">
+        Exclusive
+      </a>
+
+      <!-- DESKTOP MENU LINKS -->
+      <nav class="hidden md:flex items-center gap-8 text-base font-medium text-brand-dark">
+        <a href="#hero-section" class="text-brand-primary hover:text-brand-primary transition-all relative py-1 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-brand-primary nav-item">Home</a>
+        <a href="#shop-section" class="text-gray-700 hover:text-brand-primary transition-all relative py-1 nav-item">Shop</a>
+        <a href="#categories-section" class="text-gray-700 hover:text-brand-primary transition-all relative py-1 nav-item">Categories</a>
+        <a href="#footer-section" class="text-gray-700 hover:text-brand-primary transition-all relative py-1 nav-item">About</a>
+      </nav>
+
+      <!-- RIGHT CONTROLS -->
+      <div class="flex items-center gap-3 lg:gap-6">
+        <!-- SEARCH BOX -->
+        <div class="relative hidden sm:block w-48 lg:w-64">
+          <div class="relative">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="What are you looking for?"
+              class="w-full bg-[#F5F5F5] rounded-md py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-brand-primary border border-transparent transition-all"
+            />
+            <button class="absolute right-3 top-2.5 text-gray-600 hover:text-brand-primary transition-colors">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- WISHLIST (HEART) -->
+        <a href="#wishlist" class="p-2 rounded-full hover:bg-gray-100 text-gray-700 transition-colors relative" title="Wishlist">
+          <i data-lucide="heart" class="w-5 h-5"></i>
+          <span class="absolute top-1 right-1 w-4 h-4 bg-brand-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center" id="wishlist-count">
+            2
+          </span>
+        </a>
+
+        <!-- CART (SHOPPING CART) -->
+        <div class="relative group">
+          <a href="#cart" class="p-2 rounded-full hover:bg-gray-100 text-gray-700 transition-colors relative block" title="Cart">
+            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+            <span class="absolute top-1 right-1 w-4 h-4 bg-brand-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center" id="cart-count">
+              3
+            </span>
+          </a>
+
+          <!-- ACTIVE MINI-CART PREVIEW ON HOVER -->
+          <div class="absolute right-0 top-12 w-80 bg-white border border-gray-100 rounded-xl shadow-2xl z-50 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 pointer-events-none group-hover:pointer-events-auto divide-y divide-gray-100">
+            <div class="pb-3 text-sm font-semibold text-gray-900">My Cart (Mini-Preview)</div>
+            <div class="py-3 max-h-60 overflow-y-auto space-y-3 custom-scroll" id="mini-cart-container">
+              <!-- Rendered via JS -->
+            </div>
+            <div class="pt-3">
+              <div class="flex justify-between text-xs font-semibold text-gray-900 mb-3">
+                <span>Total:</span>
+                <span class="text-brand-primary font-bold" id="mini-cart-total">$0.00</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-2xs">
+                <button onclick="alert('Cart view simulated!')" class="py-2 px-3 border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 font-medium rounded text-center transition-all cursor-pointer">
+                  View Basket
+                </button>
+                <button onclick="alert('Proceeding to Checkout flow!')" class="py-2 px-3 bg-brand-primary hover:bg-[#C23333] text-white font-medium rounded text-center transition-all cursor-pointer">
+                  Checkout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE MENU BUTTON -->
+        <div class="relative">
+          <button id="profile-btn" class="p-2 rounded-full hover:bg-gray-100 text-gray-700 transition-colors cursor-pointer" title="Account">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </button>
+
+          <!-- DROPDOWN OPTIONS -->
+          <div id="profile-dropdown" class="hidden absolute right-0 top-12 w-56 bg-brand-dark/95 backdrop-blur-md rounded-lg shadow-2xl z-50 p-2 text-white text-xs ring-1 ring-white/15">
+            <a href="#" onclick="alert('Sign In simulated')" class="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-white/10 text-left transition-colors">
+              <i data-lucide="user" class="w-4 h-4 text-brand-primary"></i>
+              <span>Manage My Account</span>
+            </a>
+            <div class="h-[1px] bg-white/10 my-1"></div>
+            <button onclick="alert('Log Out simulated')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-rose-500/10 text-rose-300 text-left transition-colors">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button id="mobile-menu-btn" class="p-2 md:hidden rounded-full hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE EXPANSIVE DRAWER -->
+    <div id="mobile-menu" class="hidden md:hidden w-full bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4 shadow-inner">
+      <div class="flex flex-col gap-3 font-semibold text-gray-800">
+        <a href="#hero-section" class="text-sm py-2 px-1 text-brand-primary border-l-2 border-brand-primary pl-2">Home</a>
+        <a href="#shop-section" class="text-sm py-2 px-1 hover:text-brand-primary">Shop Now</a>
+        <a href="#categories-section" class="text-sm py-2 px-1 hover:text-brand-primary font-light">Featured Categories</a>
+        <a href="#footer-section" class="text-sm py-2 px-1 hover:text-brand-primary font-light">Information Desk</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN HOME WORKSPACE ================= -->
+  <main class="flex-grow">
+    
+    <!-- 1. HERO BANNER & CATEGORY BANNER SLIDE SEGMENT -->
+    <section id="hero-section" class="w-full max-w-7xl mx-auto px-4 md:px-8 py-10 select-none grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT LIST SIDEBAR (Category Explorer Navigation) -->
+      <aside class="lg:col-span-3 border-r border-gray-100 pr-4 space-y-3.5 hidden lg:block">
+        <button onclick="applyCategoryFilter('gaming')" class="w-full flex justify-between items-center text-sm font-semibold text-gray-700 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Gaming Station</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+        <button onclick="applyCategoryFilter('laptops')" class="w-full flex justify-between items-center text-sm font-semibold text-gray-700 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Laptops & Computers</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+        <button onclick="applyCategoryFilter('sound')" class="w-full flex justify-between items-center text-sm font-medium text-gray-600 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Audio & Soundbar</span>
+        </button>
+        <button onclick="applyCategoryFilter('appliances')" class="w-full flex justify-between items-center text-sm font-medium text-gray-600 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Home & Appliances</span>
+        </button>
+        <button onclick="applyCategoryFilter('phones')" class="w-full flex justify-between items-center text-sm font-medium text-gray-600 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Phones & Tablets</span>
+        </button>
+        <button onclick="applyCategoryFilter('smartwatches')" class="w-full flex justify-between items-center text-sm font-medium text-gray-600 hover:text-brand-primary transition-all py-1.5 px-2 rounded hover:bg-gray-50 text-left cursor-pointer">
+          <span>Smartwatches</span>
+        </button>
+        <button onclick="applyCategoryFilter('All')" class="w-full flex justify-between items-center text-sm font-semibold text-brand-primary bg-red-50/50 py-1.5 px-2 rounded text-left cursor-pointer">
+          <span>Show All Systems</span>
+        </button>
+      </aside>
+
+      <!-- RIGHT SLIDESHOW CAROUSEL BILLBOARD -->
+      <div class="lg:col-span-9 w-full h-[340px] md:h-[400px] bg-black text-white rounded-lg relative overflow-hidden flex items-center">
+        
+        <!-- SLIDE 1 (Active) -->
+        <div id="slide-1" class="fade-slide absolute inset-0 w-full h-full p-8 md:p-16 flex items-center opacity-100 z-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-full items-center">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🍏</span>
+                <span class="text-xs md:text-sm font-medium text-gray-300">iPhone 14 Series Launch</span>
+              </div>
+              <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                Up to 10%<br>off Voucher
+              </h2>
+              <div class="pt-2">
+                <a href="#shop-section" class="inline-flex items-center gap-2 border-b-2 border-white pb-1 font-semibold text-sm hover:text-brand-primary hover:border-brand-primary transition-all">
+                  Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+              </div>
+            </div>
+            <div class="flex justify-center select-none pointer-events-none">
+              <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=400" className="max-h-[220px] md:max-h-[280px] object-contain rounded-lg drop-shadow-[0_15px_15px_rgba(255,255,255,0.15)]" alt="iPhone 14">
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2 (Hidden) -->
+        <div id="slide-2" class="fade-slide absolute inset-0 w-full h-full p-8 md:p-16 flex items-center opacity-0 z-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-full items-center">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">🎮</span>
+                <span class="text-xs md:text-sm font-medium text-gray-300">PlayStation 5 Console Deals</span>
+              </div>
+              <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                Get Wired for<br>Extreme Gaming
+              </h2>
+              <div class="pt-2">
+                <a href="#shop-section" onclick="applyCategoryFilter('gaming')" class="inline-flex items-center gap-2 border-b-2 border-white pb-1 font-semibold text-sm hover:text-brand-primary hover:border-brand-primary transition-all">
+                  Browse Gear <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+              </div>
+            </div>
+            <div class="flex justify-center select-none pointer-events-none">
+              <img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&q=80&w=400" className="max-h-[220px] md:max-h-[280px] object-contain rounded-lg" alt="PS5 Gear">
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDERS CONTROLLERS -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2.5 z-30">
+          <button onclick="goToSlide(1)" id="dot-1" class="w-3.5 h-3.5 rounded-full bg-white border border-brand-primary cursor-pointer transition-all"></button>
+          <button onclick="goToSlide(2)" id="dot-2" class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-white cursor-pointer transition-all"></button>
+        </div>
+
+        <!-- DIRECTIONAL ARROWS -->
+        <button onclick="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-sm z-30 cursor-pointer hidden md:flex">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <button onclick="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-sm z-30 cursor-pointer hidden md:flex">
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. BROWSE CATEGORIES FEATURED ACCENTS -->
+    <section id="categories-section" class="w-full max-w-7xl mx-auto px-4 md:px-8 py-16 select-none border-t border-gray-100">
+      <div class="flex flex-col gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-5 h-10 bg-brand-primary rounded-sm"></div>
+          <span class="text-brand-primary font-bold text-sm tracking-widest uppercase">Categories</span>
+        </div>
+        <div class="flex justify-between items-end gap-4">
+          <h2 class="text-2xl sm:text-3.5xl font-bold tracking-tight text-brand-dark">Browse By Category</h2>
+          <div class="flex gap-2.5">
+            <button onclick="scrollCategories(-1)" class="w-11 h-11 bg-gray-100 hover:bg-brand-primary hover:text-white rounded-full flex items-center justify-center transition-all cursor-pointer">
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <button onclick="scrollCategories(1)" class="w-11 h-11 bg-gray-100 hover:bg-brand-primary hover:text-white rounded-full flex items-center justify-center transition-all cursor-pointer">
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- FLEXIBLE SLIDABLE COMPACT BENTO GRID -->
+        <div id="categories-scroller" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 pt-4 overflow-x-auto scroll-smooth">
+          
+          <div onclick="applyCategoryFilter('phones')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group">
+            <i data-lucide="smartphone" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Phones</span>
+          </div>
+
+          <div onclick="applyCategoryFilter('laptops')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group">
+            <i data-lucide="monitor" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Computers</span>
+          </div>
+
+          <div onclick="applyCategoryFilter('smartwatches')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group">
+            <i data-lucide="watch" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Smartwatch</span>
+          </div>
+
+          <div onclick="applyCategoryFilter('gaming')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group select-none">
+            <i data-lucide="gamepad-2" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Gaming</span>
+          </div>
+
+          <div onclick="applyCategoryFilter('accessories')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group">
+            <i data-lucide="keyboard" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Accessories</span>
+          </div>
+
+          <div onclick="applyCategoryFilter('sound')" class="border border-gray-150 rounded-lg py-7 text-center hover:bg-brand-primary hover:border-brand-primary hover:text-white hover:scale-103 transition-all cursor-pointer flex flex-col items-center justify-center bg-white group">
+            <i data-lucide="headphones" class="w-10 h-10 mb-3.5 text-gray-800 group-hover:text-white"></i>
+            <span class="text-sm font-semibold">Headphones</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PRODUCT CATALOG LISTING (SHOP) -->
+    <section id="shop-section" class="w-full max-w-7xl mx-auto px-4 md:px-8 py-10 select-none border-t border-gray-100">
+      
+      <!-- SUBSECTION HEADERS -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-5 h-10 bg-brand-primary rounded-sm"></div>
+        <span class="text-brand-primary font-bold text-sm tracking-widest uppercase">Our Products</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10 pb-6 border-b border-gray-100">
+        <div>
+          <h2 class="text-2xl sm:text-3.5xl font-bold tracking-tight text-brand-dark">Explore Our Inventory</h2>
+          <p class="text-xs text-gray-400 mt-1.5 font-light" id="shop-caption">Showing all pixel-perfect products</p>
+        </div>
+
+        <!-- COMPACT FILTER BAR controls (Interactive via JS) -->
+        <div class="flex flex-wrap items-center gap-3.5">
+          <div class="flex items-center gap-1.5 bg-[#F5F5F5] py-2 px-3.5 rounded-lg border border-transparent">
+            <span class="text-2xs text-gray-400 uppercase font-bold tracking-wider">Category:</span>
+            <select id="filter-category" onchange="onFilterChange()" class="bg-transparent text-xs text-gray-800 font-semibold focus:outline-none cursor-pointer">
+              <option value="All">All Categories</option>
+              <option value="gaming">Gaming</option>
+              <option value="laptops">Laptops</option>
+              <option value="sound">sound/Audio</option>
+              <option value="appliances">Appliances</option>
+              <option value="phones">Phones</option>
+              <option value="accessories">accessories</option>
+              <option value="smartwatches">smartwatches</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 bg-[#F5F5F5] py-2 px-3.5 rounded-lg border border-transparent">
+            <span class="text-2xs text-gray-400 uppercase font-bold tracking-wider">Prices:</span>
+            <select id="filter-price" onchange="onFilterChange()" class="bg-transparent text-xs text-gray-800 font-semibold focus:outline-none cursor-pointer">
+              <option value="All">Any Price</option>
+              <option value="under100">Under $100</option>
+              <option value="100to500">$100 - $500</option>
+              <option value="over500">Over $500</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT CARDS TARGET GRID -->
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
+        <!-- Rendered dynamically by JavaScript to enable filters, Buy Now clicks, heart states etc. -->
+      </div>
+
+      <!-- NO RESULTS PLACEHOLDER -->
+      <div id="no-products" class="hidden text-center py-24 select-none">
+        <i data-lucide="shield-alert" class="w-12 h-12 mx-auto text-brand-primary mb-4 animate-bounce"></i>
+        <p class="text-lg font-semibold text-brand-dark">No high performance products match your parameters.</p>
+        <button onclick="resetFilters()" class="mt-4 px-6 py-2.5 bg-brand-primary hover:bg-[#C23333] text-white text-xs font-semibold rounded cursor-pointer transition-all shadow-md">
+          Reset Search Parameters
+        </button>
+      </div>
+
+      <!-- PAGINATION AND LOAD MORE BUTTONS -->
+      <div class="w-full flex flex-col justify-center items-center mt-16 gap-3 select-none">
+        <button id="load-more-btn" onclick="loadMoreProducts()" class="bg-brand-primary hover:bg-[#C23333] active:scale-95 text-white text-sm font-semibold py-4 px-12 rounded shadow-md transition-all cursor-pointer">
+          View All Products Catalog
+        </button>
+        <div class="flex items-center gap-2 text-2xs text-gray-400" id="pagination-status">
+          Showing <span class="font-bold text-gray-800" id="visible-count">8</span> of <span class="font-bold" id="total-count">12</span> items
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= DETAILED OVERLAY MODAL FOR "BUY NOW" / "QUICK VIEW" ================= -->
+  <div id="quick-view-modal" class="hidden fixed inset-0 bg-brand-dark/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 relative overflow-hidden animate-in zoom-in-95 duration-150">
+      
+      <!-- CLOSE BUTTON -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <!-- LEFT PHOTO CONTAINER -->
+        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center relative p-4">
+          <span id="modal-tag" class="absolute top-3 left-3 bg-brand-primary text-white text-[9px] font-extrabold px-2.5 py-1 rounded">
+            -25%
+          </span>
+          <img id="modal-image" src="" class="max-h-[185px] max-w-[185px] object-contain rounded" alt="Detail product">
+        </div>
+
+        <!-- RIGHT DATA PANEL -->
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <span id="modal-category" class="text-[10px] font-extrabold text-brand-primary uppercase tracking-widest block">Gaming</span>
+            <h3 id="modal-name" class="text-xl font-bold text-brand-dark tracking-tight leading-tight">HAVIT Gamepad</h3>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <div class="flex text-amber-500" id="modal-stars">
+              <!-- JS Generated Stars -->
+            </div>
+            <span class="text-gray-400 font-semibold" id="modal-reviews">(88 reviews)</span>
+          </div>
+
+          <div class="flex items-center gap-3 text-sm">
+            <span id="modal-curr-price" class="font-bold text-brand-primary font-lg">$120.00</span>
+            <span id="modal-orig-price" class="text-gray-400 line-through font-light">$160.00</span>
+          </div>
+
+          <p id="modal-description" class="text-xs text-gray-500 font-light leading-relaxed">
+            Unleash peak performance with state-of-the-art response speed, customized ergonomics, and rich materials crafted according to premium gaming blueprints.
+          </p>
+
+          <!-- INTERACTIVE QUANTITY AND ADD SYSTEM -->
+          <div class="space-y-4 pt-3.5 border-t border-gray-100">
+            <div class="flex items-center gap-4">
+              <span class="text-xs text-gray-600 font-semibold select-none">Quantity:</span>
+              <div class="flex items-center border border-gray-200 rounded-md w-24 h-9 bg-white">
+                <button onclick="changeModalQty(-1)" class="px-2 h-full bg-white hover:bg-gray-50 text-gray-600 border-r border-gray-200 cursor-pointer flex-1 flex items-center justify-center font-bold">-</button>
+                <span id="modal-qty-cnt" class="px-3 font-mono font-bold text-center text-xs min-w-[20px]">1</span>
+                <button onclick="changeModalQty(1)" class="px-2 h-full bg-white hover:bg-gray-50 text-gray-600 border-l border-gray-200 cursor-pointer flex-1 flex items-center justify-center font-bold">+</button>
+              </div>
+            </div>
+
+            <!-- ACTION BUTTON COUPLING -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <button onclick="triggerModalAddToCart()" class="w-full bg-brand-dark hover:bg-neutral-800 text-white font-semibold text-xs py-3.5 rounded-lg active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center gap-2">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Add to Cart
+              </button>
+              <button onclick="triggerModalBuyNow()" class="w-full bg-brand-primary hover:bg-brand-hoverPrimary text-white font-semibold text-xs py-3.5 rounded-lg active:scale-95 transition-all text-center cursor-pointer shadow">
+                Buy It Now
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER SECTION (From Task 1) ================= -->
+  <footer id="footer-section" class="w-full bg-[#000000] text-gray-300 border-t border-gray-900 select-none mt-20">
+    <div class="w-full max-w-7xl mx-auto px-4 md:px-8 pt-16 pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8 justify-between text-sm">
+      
+      <!-- COLUMN 1: SUBSCRIBE -->
+      <div class="space-y-4">
+        <div class="text-white text-xl font-bold tracking-wider cursor-pointer font-sans">
+          Exclusive
+        </div>
+        <div class="font-semibold text-white">Subscribe</div>
+        <p class="text-gray-400 text-xs">Get 10% off your first order</p>
+        
+        <form id="subscribe-form" class="relative max-w-xs">
+          <input
+            type="email"
+            id="subscribe-email"
+            placeholder="Enter your email"
+            class="w-full bg-[#000000] border border-white rounded-md py-2.5 px-4 pr-10 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-primary placeholder-gray-500 font-light transition-all"
+            required
+          />
+          <button type="submit" class="absolute right-3 top-2.5 text-white hover:text-brand-primary transition-all">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </form>
+        <span id="subscribe-toast" class="hidden text-brand-green text-[10px] block animate-pulse">
+          Subscribed Code SENT successfully!
+        </span>
+      </div>
+
+      <!-- COLUMN 2: SUPPORT -->
+      <div class="space-y-4">
+        <div class="font-semibold text-white tracking-wide text-base">Support</div>
+        <ul class="space-y-3.5 text-xs text-gray-400 leading-relaxed font-light">
+          <li class="hover:text-white transition-colors duration-150">
+            111 Bijoy sarani, Dhaka,<br />DH 1515, Bangladesh.
+          </li>
+          <li class="hover:text-white transition-colors duration-150">
+            <a href="mailto:exclusive@gmail.com">exclusive@gmail.com</a>
+          </li>
+          <li class="hover:text-white transition-colors duration-150">
+            <a href="tel:+88015888889999">+88015-88888-9999</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 3: ACCOUNT -->
+      <div class="space-y-4">
+        <div class="font-semibold text-white tracking-wide text-base">Account</div>
+        <ul class="space-y-2.5 text-xs text-gray-400 font-light">
+          <li class="hover:text-white transition-colors duration-150"><a href="#account" onclick="alert('Account settings simulated')">My Account</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#login" onclick="alert('Login simulated')">Login / Register</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#cart" onclick="alert('Shopping Basket simulated')">Cart</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#wishlist" onclick="alert('Favorites Collection simulated')">Wishlist</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#shop-section">Shop Product List</a></li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 4: QUICK LINKS -->
+      <div class="space-y-4">
+        <div class="font-semibold text-white tracking-wide text-base">Quick Link</div>
+        <ul class="space-y-2.5 text-xs text-gray-400 font-light">
+          <li class="hover:text-white transition-colors duration-150"><a href="#privacy" onclick="alert('Privacy policies simulated')">Privacy Policy</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#terms" onclick="alert('Terms simulated')">Terms Of Use</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#faq" onclick="alert('FAQ simulated')">FAQ</a></li>
+          <li class="hover:text-white transition-colors duration-150"><a href="#shop-section">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 5: DOWNLOAD APP -->
+      <div class="space-y-3">
+        <div class="font-semibold text-white tracking-wide text-base">Download App</div>
+        <p class="text-gray-400 text-2xs font-light">Save $3 with App New User Only</p>
+        
+        <div class="flex gap-2 items-center">
+          <!-- QR CODE VECTOR DESIGN -->
+          <div class="bg-white p-1 rounded border border-neutral-700 flex items-center justify-center">
+            <div class="w-[74px] h-[74px] flex flex-wrap p-1 gap-[3px] bg-white text-black">
+              <div class="w-[20px] h-[20px] border-[5px] border-black m-[1px]"></div>
+              <div class="w-[20px] h-[20px] flex flex-wrap gap-[2px]">
+                <div class="w-1.5 h-1.5 bg-black"></div>
+                <div class="w-1.5 h-1.5 bg-black"></div>
+              </div>
+              <div class="w-[20px] h-[20px] border-[5px] border-black m-[1px]"></div>
+              <div class="w-[20px] h-[20px] flex flex-wrap gap-[2px]">
+                <div class="w-1.5 h-1.5 bg-black"></div>
+                <div class="w-1.5 h-1.5 bg-black"></div>
+              </div>
+              <div class="w-[20px] h-[20px] bg-neutral-900"></div>
+              <div class="w-[20px] h-[20px] flex gap-1">
+                <div class="w-2 h-2 bg-black"></div>
+                <div class="w-2 h-2 bg-black"></div>
+              </div>
+              <div class="w-[20px] h-[20px] border-[5px] border-black m-[1px]"></div>
+              <div class="w-[20px] h-[20px] flex gap-1">
+                <div class="w-2 h-2 bg-black"></div>
+              </div>
+              <div class="w-[20px] h-[20px] bg-black"></div>
+            </div>
+          </div>
+
+          <!-- STORES NAVIGATION -->
+          <div class="flex flex-col gap-1.5">
+            <!-- Google Play Store -->
+            <a href="#" class="flex items-center gap-1.5 bg-neutral-950 hover:bg-[#121212] border border-neutral-700 py-1.5 px-2 rounded w-[114px]">
+              <svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                <path d="M5,3l12.7,12.7c0.2,0.2,0.2,0.5,0,0.7L5,21C4.4,21.6,3.5,21.1,3.5,20.3V3.7C3.5,2.9,4.4,2.4,5,3z M19,10.6 l-3-3l-2.7,2.7L19,10.6z" />
+              </svg>
+              <div class="flex flex-col leading-tight">
+                <span class="text-[7px] text-gray-400">GET IT ON</span>
+                <span class="text-[10px] font-bold text-white block -mt-0.5">Google Play</span>
+              </div>
+            </a>
+
+            <!-- App Store -->
+            <a href="#" class="flex items-center gap-1.5 bg-neutral-950 hover:bg-[#121212] border border-neutral-700 py-1.5 px-2 rounded w-[114px]">
+              <svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                <path d="M18.71,19.5C17.88,20.74,17,21.95,15.66,22c-1.31,0-1.72-.8-3.22-.8s-2,.78-3.25.82C7.89,22,7,20.85,6.15,19.65,4.42,17.18,3.1,12.63,4.87,9.58A5.92,5.92,0,0,1,9.88,7.61c1.55,0,3,.1,4,.58s1.85-.58,3.48-.42A5.63,5.63,0,0,1,21,10.42c-1.42.85-2.38,2.42-2.38,4.19s1.1,3.4,2.5,4.1A6.16,6.16,0,0,1,18.71,19.5ZM16,4.64a5.61,5.61,0,0,0,1.18-3.64A5.64,5.64,0,0,1,13.6,2.2c0,0-.11,1.18-.46,2.3A5.41,5.41,0,0,0,16,4.64Z" />
+              </svg>
+              <div class="flex flex-col leading-tight">
+                <span class="text-[7px] text-gray-400">Download on the</span>
+                <span class="text-[10px] font-bold text-white block -mt-0.5">App Store</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- SOCIAL LINKS -->
+        <div class="flex gap-6 items-center pt-3 text-white">
+          <a href="#" class="hover:text-brand-primary hover:scale-110 transition-all" title="Facebook">
+            <i data-lucide="facebook" class="w-5 h-5"></i>
+          </a>
+          <a href="#" class="hover:text-brand-primary hover:scale-110 transition-all" title="Twitter">
+            <i data-lucide="twitter" class="w-5 h-5"></i>
+          </a>
+          <a href="#" class="hover:text-brand-primary hover:scale-110 transition-all" title="Instagram">
+            <i data-lucide="instagram" class="w-5 h-5"></i>
+          </a>
+          <a href="#" class="hover:text-brand-primary hover:scale-110 transition-all" title="LinkedIn">
+            <i data-lucide="linkedin" class="w-5 h-5"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COPYRIGHT DIVIDER -->
+    <div class="w-full border-t border-neutral-900 py-6 text-center bg-black">
+      <p class="text-gray-600 text-xs font-light">
+        &copy; Rimel 2026. All rights reserved. Elegant Figma Recreation.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ================= CLIENT SIDE DYNAMIC INTERACTIVE ENGINE ================= -->
+  <script>
+    // 1. DATA BLUEPRINTS
+    const PRODUCTS = [
+      {
+        id: 'p1',
+        name: 'HAVIT HV-G92 Gamepad',
+        price: 120,
+        originalPrice: 160,
+        discountPercentage: 25,
+        rating: 4.8,
+        reviewsCount: 88,
+        image: 'https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?auto=format&fit=crop&q=80&w=300',
+        category: 'gaming',
+        tag: 'HOT',
+        colors: ['#DB4444', '#000000']
+      },
+      {
+        id: 'p2',
+        name: 'AK-900 Wired Keyboard',
+        price: 96,
+        originalPrice: 116,
+        discountPercentage: 17,
+        rating: 4.0,
+        reviewsCount: 75,
+        image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&q=80&w=300',
+        category: 'accessories',
+        tag: 'sale'
+      },
+      {
+        id: 'p3',
+        name: 'IPS LCD Gaming Monitor',
+        price: 370,
+        originalPrice: 400,
+        discountPercentage: 8,
+        rating: 4.9,
+        reviewsCount: 99,
+        image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=300',
+        category: 'laptops',
+        tag: 'HOT',
+        colors: ['#000000']
+      },
+      {
+        id: 'p4',
+        name: 'RGB Liquid CPU Cooler',
+        price: 160,
+        originalPrice: 170,
+        discountPercentage: 6,
+        rating: 4.6,
+        reviewsCount: 64,
+        image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=300',
+        category: 'accessories',
+        tag: 'NEW'
+      },
+      {
+        id: 'p5',
+        name: 'ASUS ROG G15 Gaming Laptop',
+        price: 1099,
+        originalPrice: 1200,
+        discountPercentage: 10,
+        rating: 4.9,
+        reviewsCount: 142,
+        image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=300',
+        category: 'laptops',
+        tag: 'PREMIUM'
+      },
+      {
+        id: 'p6',
+        name: 'HyperX Cloud II Headset',
+        price: 79,
+        originalPrice: 99,
+        discountPercentage: 20,
+        rating: 4.5,
+        reviewsCount: 230,
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300',
+        category: 'sound',
+        tag: 'sale'
+      },
+      {
+        id: 'p7',
+        name: 'Samsung Galaxy Watch 5',
+        price: 220,
+        originalPrice: 280,
+        discountPercentage: 21,
+        rating: 4.7,
+        reviewsCount: 110,
+        image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&q=80&w=300',
+        category: 'smartwatches',
+        tag: 'NEW'
+      },
+      {
+        id: 'p8',
+        name: 'Canon EOS Rebel T7 DSLR',
+        price: 479,
+        originalPrice: 530,
+        discountPercentage: 10,
+        rating: 4.4,
+        reviewsCount: 82,
+        image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=300',
+        category: 'appliances',
+        tag: 'POPULAR'
+      },
+      {
+        id: 'p9',
+        name: 'iPhone 14 Pro Max - 256GB',
+        price: 1199,
+        originalPrice: 1299,
+        discountPercentage: 8,
+        rating: 5.0,
+        reviewsCount: 310,
+        image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=300',
+        category: 'phones',
+        tag: 'ELITE'
+      },
+      {
+        id: 'p10',
+        name: 'Smart Robotic Vacuum Cleaner',
+        price: 240,
+        originalPrice: 300,
+        discountPercentage: 20,
+        rating: 4.3,
+        reviewsCount: 45,
+        image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=300',
+        category: 'appliances',
+        tag: 'SMART'
+      },
+      {
+        id: 'p11',
+        name: 'Premium Leather Smart Band',
+        price: 49,
+        originalPrice: 65,
+        discountPercentage: 24,
+        rating: 4.2,
+        reviewsCount: 19,
+        image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&q=80&w=300',
+        category: 'smartwatches',
+        tag: 'TRENDING'
+      },
+      {
+        id: 'p12',
+        name: 'Logitech G PRO Wireless Mouse',
+        price: 110,
+        originalPrice: 130,
+        discountPercentage: 15,
+        rating: 4.8,
+        reviewsCount: 167,
+        image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&q=80&w=300',
+        category: 'gaming',
+        tag: 'PRO'
+      }
+    ];
+
+    // 2. STATE STORES
+    let activeCategory = 'All';
+    let activePriceCap = 'All';
+    let visibleLimit = 8;
+    let selectedActiveProduct = null;
+    let modalSelectedQty = 1;
+
+    let cartList = [
+      { product: PRODUCTS[0], quantity: 1 },
+      { product: PRODUCTS[1], quantity: 1 },
+      { product: PRODUCTS[5], quantity: 1 }
+    ];
+    let wishlistIds = ['p1', 'p3'];
+
+    // 3. INITIALIZATION CALL
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderShopGrid();
+      syncCartUI();
+      syncWishlistUI();
+    });
+
+    // 4. MAIN PRODUCT GRID RENDERING ENGINE (Figma Layout Cards)
+    function renderShopGrid() {
+      const grid = document.getElementById('products-grid');
+      const noProducts = document.getElementById('no-products');
+      const loadMoreBtn = document.getElementById('load-more-btn');
+      
+      // Filter step
+      let items = [...PRODUCTS];
+
+      if (activeCategory !== 'All') {
+        items = items.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
+      }
+
+      if (activePriceCap !== 'All') {
+        if (activePriceCap === 'under100') {
+          items = items.filter(p => p.price < 100);
+        } else if (activePriceCap === '100to500') {
+          items = items.filter(p => p.price >= 100 && p.price <= 500);
+        } else if (activePriceCap === 'over500') {
+          items = items.filter(p => p.price > 500);
+        }
+      }
+
+      // Count matches
+      const totalFilteredCount = items.length;
+      document.getElementById('total-count').textContent = totalFilteredCount;
+
+      // Slice step (Pagination / Load More)
+      const shownItems = items.slice(0, visibleLimit);
+      document.getElementById('visible-count').textContent = shownItems.length;
+
+      // Handle empty condition
+      if (shownItems.length === 0) {
+        grid.innerHTML = '';
+        noProducts.classList.remove('hidden');
+        loadMoreBtn.classList.add('hidden');
+        document.getElementById('pagination-status').classList.add('hidden');
+        return;
+      }
+
+      noProducts.classList.add('hidden');
+      document.getElementById('pagination-status').classList.remove('hidden');
+
+      // Toggle load more visibility
+      if (visibleLimit >= totalFilteredCount) {
+        loadMoreBtn.classList.add('hidden');
+      } else {
+        loadMoreBtn.classList.remove('hidden');
+      }
+
+      // Generate Card HTML
+      let html = '';
+      shownItems.forEach(prod => {
+        const isFav = wishlistIds.includes(prod.id);
+        const heartFill = isFav ? '#DB4444' : 'none';
+        const heartColorClass = isFav ? 'text-brand-primary' : 'text-gray-700';
+
+        // Stars generator
+        let starsHtml = '';
+        const floorRating = Math.floor(prod.rating);
+        for (let i = 1; i <= 5; i++) {
+          if (i <= floorRating) {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 fill-current text-amber-500"></i>`;
+          } else {
+            starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 text-gray-200"></i>`;
+          }
+        }
+
+        html += `
+          <div class="group relative bg-white border border-gray-100 rounded-lg p-3 hover:shadow-xl transition-all duration-300" id="${prod.id}">
+            <!-- BADGES & IMAGES -->
+            <div class="w-full h-[220px] bg-brand-lightBg rounded-md flex items-center justify-center relative overflow-hidden select-none">
+              
+              <!-- Hot Tags -->
+              ${prod.discountPercentage ? `
+                <span class="absolute top-3 left-3 bg-brand-primary text-white text-[9px] font-extrabold px-2 py-1 rounded select-none">
+                  -${prod.discountPercentage}%
+                </span>
+              ` : `
+                <span class="absolute top-3 left-3 bg-brand-dark text-white text-[9px] font-extrabold px-2 py-1 rounded uppercase select-none">
+                  ${prod.tag || 'NEW'}
+                </span>
+              `}
+
+              <!-- Secondary Actions Hover Buttons inside absolute panel -->
+              <div class="absolute top-3 right-3 flex flex-col gap-2 z-20">
+                <button onclick="toggleWishlist('${prod.id}')" class="w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center cursor-pointer transition-transform hover:scale-110 hover:bg-rose-50 ${heartColorClass}">
+                  <i data-lucide="heart" class="w-4 h-4" fill="${heartFill}"></i>
+                </button>
+                <button onclick="openQuickView('${prod.id}')" class="w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:text-brand-primary cursor-pointer transition-transform hover:scale-110 hover:bg-blue-50">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Product Thumbnail -->
+              <img src="${prod.image}" class="max-h-[140px] max-w-[140px] object-contain group-hover:scale-105 transition-transform duration-500 rounded" alt="${prod.name}">
+
+              <!-- Buy Now Interactive Drawer Hover button -->
+              <button onclick="instantBuy('${prod.id}')" class="absolute bottom-0 left-0 w-full bg-brand-dark text-white text-xs font-semibold py-3 flex items-center justify-center gap-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 cursor-pointer hover:bg-brand-primary active:scale-95">
+                <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> BUY NOW / ADD
+              </button>
+
+            </div>
+
+            <!-- CARD DETAIL BOX -->
+            <div class="pt-3.5 px-1 space-y-1.5">
+              <h4 class="font-bold text-xs sm:text-sm text-brand-dark leading-tight group-hover:text-brand-primary transition-colors truncate">
+                ${prod.name}
+              </h4>
+              
+              <div class="flex items-center gap-3 text-xs">
+                <span class="font-bold text-brand-primary">$${prod.price}</span>
+                ${prod.originalPrice ? `
+                  <span class="font-light text-gray-400 line-through">$${prod.originalPrice}</span>
+                ` : ''}
+              </div>
+
+              <div class="flex items-center gap-1.5 pt-0.5">
+                <div class="flex">
+                  ${starsHtml}
+                </div>
+                <span class="text-[10px] font-semibold text-gray-400">(${prod.reviewsCount})</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // 5. INTERACTIVE FUNCTION FILTERS CONTROL
+    function onFilterChange() {
+      activeCategory = document.getElementById('filter-category').value;
+      activePriceCap = document.getElementById('filter-price').value;
+      visibleLimit = 8; // Reset visible limit
+      renderShopGrid();
+      
+      const categoryLabel = activeCategory === 'All' ? 'all categories' : `"${activeCategory}"`;
+      document.getElementById('shop-caption').textContent = `Filtered matches for ${categoryLabel} (Price range: ${activePriceCap})`;
+    }
+
+    function applyCategoryFilter(cat) {
+      activeCategory = cat;
+      document.getElementById('filter-category').value = cat;
+      onFilterChange();
+      
+      // Auto scroll down gracefully to the products header
+      document.getElementById('shop-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-category').value = 'All';
+      document.getElementById('filter-price').value = 'All';
+      onFilterChange();
+    }
+
+    function loadMoreProducts() {
+      visibleLimit = PRODUCTS.length; // Show all products
+      renderShopGrid();
+    }
+
+    // Category carousel arrows simple horizontal scroll simulation
+    function scrollCategories(direction) {
+      const ctr = document.getElementById('categories-scroller');
+      ctr.scrollLeft += (direction * 180);
+    }
+
+    // 6. DETAILED QUICK VIEW MODAL COMPONENT ENGINE
+    function openQuickView(id) {
+      const prod = PRODUCTS.find(p => p.id === id);
+      if (!prod) return;
+
+      selectedActiveProduct = prod;
+      modalSelectedQty = 1;
+
+      document.getElementById('modal-qty-cnt').textContent = modalSelectedQty;
+      document.getElementById('modal-name').textContent = prod.name;
+      document.getElementById('modal-category').textContent = prod.category;
+      document.getElementById('modal-curr-price').textContent = `$${prod.price}.00`;
+      document.getElementById('modal-orig-price').textContent = prod.originalPrice ? `$${prod.originalPrice}.00` : '';
+      document.getElementById('modal-image').src = prod.image;
+
+      // Stars
+      let starsHtml = '';
+      const floorRating = Math.floor(prod.rating);
+      for (let i = 1; i <= 5; i++) {
+        const starType = i <= floorRating ? 'star' : 'star';
+        const starClass = i <= floorRating ? 'fill-current text-amber-500' : 'text-gray-200';
+        starsHtml += `<i data-lucide="${starType}" class="w-4 h-4 ${starClass}"></i>`;
+      }
+      document.getElementById('modal-stars').innerHTML = starsHtml;
+      document.getElementById('modal-reviews').textContent = `(${prod.reviewsCount} customer reviews)`;
+
+      // Image tag
+      const tag = document.getElementById('modal-tag');
+      tag.textContent = prod.discountPercentage ? `-${prod.discountPercentage}%` : (prod.tag || 'HOT');
+
+      document.getElementById('quick-view-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('quick-view-modal').classList.add('hidden');
+      selectedActiveProduct = null;
+    }
+
+    function changeModalQty(dir) {
+      modalSelectedQty = Math.max(1, modalSelectedQty + dir);
+      document.getElementById('modal-qty-cnt').textContent = modalSelectedQty;
+    }
+
+    // 7. BASKET WORKSPACE STATE STORAGE UTILITIES
+    function addProductToCartState(product, qty = 1) {
+      const index = cartList.findIndex(item => item.product.id === product.id);
+      if (index > -1) {
+        cartList[index].quantity += qty;
+      } else {
+        cartList.push({ product, quantity: qty });
+      }
+      syncCartUI();
+      triggerToastNotification(`Added ${qty} &times; ${product.name} to Cart successfully!`);
+    }
+
+    function instantBuy(id) {
+      const prod = PRODUCTS.find(p => p.id === id);
+      if (!prod) return;
+      addProductToCartState(prod, 1);
+    }
+
+    function toggleWishlist(id) {
+      const idx = wishlistIds.indexOf(id);
+      const prod = PRODUCTS.find(p => p.id === id);
+      if (idx > -1) {
+        wishlistIds.splice(idx, 1);
+        triggerToastNotification(`Removed ${prod.name} from saved favorites.`);
+      } else {
+        wishlistIds.push(id);
+        triggerToastNotification(`Saved ${prod.name} securely to your Wishlist ❤️`);
+      }
+      syncWishlistUI();
+      renderShopGrid();
+    }
+
+    function syncCartUI() {
+      const container = document.getElementById('mini-cart-container');
+      const cartCountBadge = document.getElementById('cart-count');
+      const totalCountSpan = document.getElementById('mini-cart-total');
+
+      if (cartList.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-400 py-6 text-center">Your shopping cart is currently empty.</p>';
+        cartCountBadge.textContent = '0';
+        totalCountSpan.textContent = '$0.00';
+        return;
+      }
+
+      // Counts
+      let subtotal = 0;
+      let totalQty = 0;
+      let html = '';
+
+      cartList.forEach((item, index) => {
+        subtotal += item.product.price * item.quantity;
+        totalQty += item.quantity;
+
+        html += `
+          <div class="flex items-center gap-3">
+            <img src="${item.product.image}" class="w-11 h-11 rounded bg-gray-100 object-contain p-1 border border-gray-150" alt="">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold text-gray-950 truncate">${item.product.name}</p>
+              <p class="text-3xs text-gray-500 font-mono">Qty: ${item.quantity} | $${item.product.price}</p>
+            </div>
+            <button onclick="removeCartItem(${index})" class="p-1 text-gray-400 hover:text-brand-primary transition-colors cursor-pointer" title="Remove Item">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      cartCountBadge.textContent = totalQty;
+      totalCountSpan.textContent = `$${subtotal.toFixed(2)}`;
+      lucide.createIcons();
+    }
+
+    function removeCartItem(index) {
+      const itemName = cartList[index].product.name;
+      cartList.splice(index, 1);
+      syncCartUI();
+      triggerToastNotification(`Removed ${itemName} from your cart list.`);
+    }
+
+    function syncWishlistUI() {
+      document.getElementById('wishlist-count').textContent = wishlistIds.length;
+    }
+
+    function triggerModalAddToCart() {
+      if (!selectedActiveProduct) return;
+      addProductToCartState(selectedActiveProduct, modalSelectedQty);
+      closeModal();
+    }
+
+    function triggerModalBuyNow() {
+      if (!selectedActiveProduct) return;
+      addProductToCartState(selectedActiveProduct, modalSelectedQty);
+      closeModal();
+      alert(`Initiated checkout workflow with ${modalSelectedQty} x ${selectedActiveProduct.name}!`);
+    }
+
+    // 8. LUXURIOUS TOAST ALERTER
+    function triggerToastNotification(msg) {
+      const node = document.createElement('div');
+      node.className = 'fixed bottom-6 right-6 bg-brand-dark/95 text-white py-3.5 px-6 rounded-lg shadow-2xl border border-white/10 text-xs font-semibold z-50 flex items-center gap-3 animate-bounce';
+      node.innerHTML = `🌟 ${msg}`;
+      document.body.appendChild(node);
+      setTimeout(() => node.remove(), 3500);
+    }
+
+    // 9. CAROUSEL SLIDES ACCREDITATION
+    let currentSlide = 1;
+    function goToSlide(n) {
+      currentSlide = n;
+      const s1 = document.getElementById('slide-1');
+      const s2 = document.getElementById('slide-2');
+      const dot1 = document.getElementById('dot-1');
+      const dot2 = document.getElementById('dot-2');
+
+      if (n === 1) {
+        s1.classList.add('opacity-100', 'z-10');
+        s1.classList.remove('opacity-0', 'z-0');
+        s2.classList.add('opacity-0', 'z-0');
+        s2.classList.remove('opacity-100', 'z-10');
+
+        dot1.className = 'w-3.5 h-3.5 rounded-full bg-white border border-brand-primary cursor-pointer transition-all';
+        dot2.className = 'w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-white cursor-pointer transition-all';
+      } else {
+        s2.classList.add('opacity-100', 'z-10');
+        s2.classList.remove('opacity-0', 'z-0');
+        s1.classList.add('opacity-0', 'z-0');
+        s1.classList.remove('opacity-100', 'z-10');
+
+        dot2.className = 'w-3.5 h-3.5 rounded-full bg-white border border-brand-primary cursor-pointer transition-all';
+        dot1.className = 'w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-white cursor-pointer transition-all';
+      }
+    }
+
+    function nextSlide() {
+      goToSlide(currentSlide === 1 ? 2 : 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentSlide === 1 ? 2 : 1);
+    }
+
+    // Auto rotate banner every 8 seconds
+    setInterval(nextSlide, 8000);
+
+    // 10. BASIC LAYOUT CONTROLLERS (Task 1 persistent links)
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      const iconAttr = mobileMenu.classList.contains('hidden') ? 'menu' : 'x';
+      mobileMenuBtn.innerHTML = `<i data-lucide="${iconAttr}" class="w-5 h-5"></i>`;
+      lucide.createIcons({
+        attrs: { class: 'w-5 h-5' },
+        nameAttr: 'data-lucide',
+        elements: [mobileMenuBtn]
+      });
+    });
+
+    const profileBtn = document.getElementById('profile-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!profileDropdown.contains(e.target) && e.target !== profileBtn) {
+        profileDropdown.classList.add('hidden');
+      }
+    });
+
+    const subscribeForm = document.getElementById('subscribe-form');
+    const subscribeToast = document.getElementById('subscribe-toast');
+    subscribeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('subscribe-email').value = '';
+      subscribeToast.classList.remove('hidden');
+      setTimeout(() => subscribeToast.classList.add('hidden'), 4000);
+    });
+  </script>
+</body>
+</html>
